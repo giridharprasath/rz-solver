@@ -11,26 +11,16 @@ py3_exe = import('python').find_installation()
 check_meson_subproject_py = files('sys/check_meson_subproject.py')
 subproject_clean_error_msg = 'Subprojects are not updated. Please run `git clean -dxff subprojects/` to delete all local subprojects directories.'
 
-r = run_command(py3_exe, check_meson_subproject_py, 'z3', repo, check: true)
+r = run_command(py3_exe, check_meson_subproject_py, 'z3', check: true)
 if r.returncode() == 1
     error(subproject_clean_error_msg)
 endif
 
-'''
-# handle z3 library
-sys_z3_opt = get_option('use_sys_z3')
-z3_dep = disabler()
-if sys_z3_opt.enabled() or sys_z3_opt.auto()
-    z3_dep = dependency('z3', required: false)
-    if not z3_dep.found()
-        z3_dep = cc.find_library('z3', required: sys_z3_opt)
-    endif
-endif
-'''
-#if (sys_z3_opt.auto() and not z3_dep.found()) or sys_z3_opt.disabled()
+z3_dep = dependency('z3', required: get_option('use_sys_z3'))
+if not z3_dep.found()
     z3_proj = subproject('z3', default_options: ['default_library=static'])
     z3_dep = z3_proj.get_variable('z3_dep')
-#endif
+endif
 
 rz_solver_deps = [
     rz_core_dep,

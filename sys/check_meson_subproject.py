@@ -8,14 +8,14 @@
 # This script is necessary to make sure people notice a subproject has been
 # changed and need to be updated. Meson does not warn you now (0.56.0)
 
-""" Portable python script to check if subproject is up-to-date and warn if not """
+"""Portable python script to check if subproject is up-to-date and warn if not"""
 
 import filecmp
 import os
 import sys
 
 subproject = sys.argv[1]
-meson_root = sys.argv[2] if len(sys.argv) > 2 else ''
+meson_root = os.environ["MESON_SOURCE_ROOT"]
 
 subproject_filename = os.path.join(meson_root, "subprojects", subproject + ".wrap")
 
@@ -45,7 +45,7 @@ try:
             subproject_git_dir = os.path.join(subproject_dir, ".git")
             if os.path.isdir(subproject_dir) and os.path.isdir(subproject_git_dir):
                 with open(
-                        os.path.join(subproject_git_dir, "HEAD"), "r", encoding="utf8"
+                    os.path.join(subproject_git_dir, "HEAD"), "r", encoding="utf8"
                 ) as f:
                     head = f.read().strip()
                 # when using a branch name, head is 'refs/heads/<branch>'
@@ -66,14 +66,8 @@ try:
                     subproject_p_f = subproject_f.replace(
                         patch_subproject_dir, subproject_dir
                     )
-
                     if not os.path.isfile(subproject_f):
                         sys.exit(2)
-
-                    if not os.path.isfile(subproject_p_f):
-                        with open(subproject_f, 'rb') as fsrc:
-                            with open(subproject_p_f, 'wb') as fdst:
-                                fdst.write(fsrc.read())
 
                     if not filecmp.cmp(subproject_p_f, subproject_f):
                         sys.exit(3)

@@ -14,7 +14,7 @@
 #define MAX_GADGET_NODE_RW 20
 
 typedef struct {
-    ut64 address;
+  ut64 address;
   char name[MAX_GADGET_NODE_NAME];
   char writes[MAX_GADGET_NODE_RW][MAX_GADGET_NODE_RW];
   int writes_count;

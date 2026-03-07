@@ -2,3 +2,6 @@ build*/
 .idea/
 subprojects/z3/*
 tests/bin
+.vscode/
+.cache/
+.venv/
